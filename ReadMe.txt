@@ -1,4 +1,6 @@
-Notes for implementing high-dimensional mediation analyses
+This file contains code for implementing our analysis from the manuscript
+"Methods for Mediation Analysis with High-Dimensional DNA Methylation Data:
+Possible Choices and Comparison"
 
 When working in R 
 
