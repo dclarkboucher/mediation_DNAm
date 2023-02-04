@@ -18,6 +18,15 @@
 #hc: high-correlation between mediators compared to baseline
 #ns: non-sparse instead of sparse
 
+# Make folders where output will be stored.
+dir.create("simulation_datasets")
+dir.create("simulation_results")
+for(name in c("bslmm","hdma","hilma","hima","med","one-at-a-time",
+              "pcma","plasso")){
+  dir.create(paste0("simulation_results/",name))
+}
+
+
 ndat <- 1 # 100 for full study
 
 {

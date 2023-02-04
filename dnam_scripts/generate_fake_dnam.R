@@ -3,6 +3,12 @@
 # pipeline as a basic example. We use the same variable names so that our
 # analysis can be understood by those who have access to data from MESA
 
+
+# Generate folders
+dir.create("dnam_files")
+dir.create("dnam_files/multivariate_results")
+dir.create("dnam_files/single_mediator")
+
 set.seed(1)
 n <- 963 # samples with DNAm data who were not on diabetes meds (diabins5 == 0)
 total_cpgs <- 2500 # actual number was 402,339

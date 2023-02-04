@@ -3,7 +3,9 @@ This file contains code for implementing our analysis from the manuscript
 Possible Choices and Comparison"
 
 R version should be >= 2.1.0. Details on the packages required are located
-in the relevant scripts.
+in the relevant scripts. When running R code, make sure that your working
+directory is the directory where this ReadMe is stored. In RStudio, you can
+do this by loading the "mediation_DNAm.Rproj" R project.
 
 SIMULATION STUDY:
 The first step in the simulation study is to generate the necessary data, which 
