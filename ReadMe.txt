@@ -2,7 +2,8 @@ This file contains code for implementing our analysis from the manuscript
 "Methods for Mediation Analysis with High-Dimensional DNA Methylation Data:
 Possible Choices and Comparison"
 
-When working in R 
+R version should be >= 2.1.0. Details on the packages required are located
+in the relevant scripts.
 
 SIMULATION STUDY:
 The first step in the simulation study is to generate the necessary data, which 
