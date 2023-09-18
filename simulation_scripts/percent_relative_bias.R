@@ -21,7 +21,7 @@ mylist <- list()
 # shrunken model) attaining an FDP < 0.10
 plasso_fdp <- function(estimates, which_cols, truth){
   # estimates: contribution estimates for a subset of mediators, some zero
-  # which_cols: which_entries in "truth" were estimated at all 
+  # which_cols: indexes of the subset of mediators provided in "estimates"
   # truth: whether each of the 2000 mediators is active
   selected <- truth & F
   selected[which_cols] <- estimates != 0
@@ -245,8 +245,23 @@ for(setting in settings){
                dataset = paste0("Setting ",dataset),
                seed2 = seed)
       
+      # PMED
+      load(file = paste0("simulation_results/pmed/sim_out_pmed_",
+                         setting,"_d",dataset,"_s",seed,".rda"))
+      d4 <-
+        tibble(method = "PMED",
+               tie = sum(alpha_a * beta_m),
+               tie_hat = pmed_tie,
+               tie_dif = tie_hat - tie,
+               tie_dif1 = abs(tie_dif),
+               tie_mse = tie_dif^2,
+               tie_prb = tie_dif1 / tie * 100,
+               setting = setting,
+               dataset = paste0("Setting ",dataset),
+               seed2 = seed)
+      
       # Merge all results
-      mylist[[setting]][[dataset]][[seed]] <- bind_rows(list(d1,d2,d3))
+      mylist[[setting]][[dataset]][[seed]] <- bind_rows(list(d1,d2,d3,d4))
     }
   }
 }

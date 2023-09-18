@@ -110,6 +110,17 @@ results$hilma <-
     )
   )
 
+# PMED
+load("dnam_files/multivariate_results/out_pmed.rda")
+results$pmed <-
+  tibble(method = "PMED", 
+         tie = pmed_tie, 
+         de = pmed_de,
+         te = tie + de,
+         pmed = tie / te
+  )
+
+
 rm(list = setdiff(ls(),l1)) # delete extra stuff we loaded along the way
 
 # Combine results

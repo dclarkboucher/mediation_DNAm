@@ -22,7 +22,7 @@
 dir.create("simulation_datasets")
 dir.create("simulation_results")
 for(name in c("bslmm","hdma","hilma","hima","med","one-at-a-time",
-              "pcma","plasso")){
+              "pcma","plasso","pmed")){
   dir.create(paste0("simulation_results/",name))
 }
 
@@ -74,7 +74,7 @@ get_data <- function(seed = 5, seed1 = 35, seed2,
     r <- 1 #parameter to regularize variance-covariance
     
     if(setting == "hc"){
-      r <- 0.3
+      r <- 0.1
     }
     
     
@@ -155,10 +155,6 @@ get_data <- function(seed = 5, seed1 = 35, seed2,
     ey <- rnorm(n,0,sqrt(var_res))
     Y <- A * beta_a + M %*% beta_m + ey
     
-    #Check variance of Y. These should be somewhat similar
-    var(Y)
-    var_y
-    
     
     save(Y, M, A, alpha_a, beta_m, beta_a, pve_a, pve_de, pve_ie,
          file = paste0("datasets/sim_data_",
@@ -169,8 +165,6 @@ get_data <- function(seed = 5, seed1 = 35, seed2,
   if(setting == "ns"){
     
     #ASSIGN PARAMETERS
-    seed <- seed
-    seed1 <- seed1 #chosen to make residual variance positive
     
     n <- 2500
     p <- 2000
@@ -324,7 +318,7 @@ get_data_flex <- function(seed = 5, seed1 = 35, seed2,
     r <- 1 #parameter to regularize variance-covariance
     
     if(setting == "ln_hc"){
-      r <- 0.3
+      r <- 0.1
     }
     
     

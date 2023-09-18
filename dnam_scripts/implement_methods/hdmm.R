@@ -3,7 +3,7 @@
 # Load libraries
 library(PDM) # devtools::install_github("https://github.com/oliverychen/PDM")
   #please make sure you have the correct PDM package loaded. Do not use the one on
-  #CRAN, which is unrelated to mediation. 
+  #CRAN, which is unrelated. 
 library(mediation) # install.packages("mediation")
 library(dplyr)
 library(readr)

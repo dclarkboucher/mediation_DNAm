@@ -1,4 +1,4 @@
-#Script for implementing HIMA, HDMA, MedFix, PCMA, and HILMA on simulated data
+#Script for implementing HIMA, HDMA, MedFix, PCMA, HILMA, and PMED on simulated data
 
 #For efficiency one should run this on a computing cluster or other system
 #allowing parallel operations. The script below assumes instead that there is
@@ -20,6 +20,7 @@ library(tidyr)
 
 source("utils/hima_hdma_utils.R") #may need other packages
 source("utils/medfix_functions.R") #may need other packages
+source("utils/pmed_functions.R") #may need other packages
 
 index <- 1 #index of the current computing core being used
 ncores <- 1 #total number of computing cores
@@ -108,12 +109,40 @@ for(row in which_run){
                      "_s",seed2,".rda")))
   
   #HILMA
+  #Note that HILMA has much better performance when the data are standardized
+  #in advance. The resulting global indirect effect is then multiplied by
+  #sdy/sda
   set.seed(123)
-  out_hilma <-  hilma(as.vector(Y), M, matrix(A, ncol = 1), center = T)
+  Y1 <- scale(Y)
+  M1 <- scale(M)
+  A1 <- scale(A)
+  
+  out_hilma <-  hilma(as.vector(Y1), as.matrix(M1), matrix(A1, ncol = 1), center = T)
   
   save(out_hilma,
        file = paste0("simulation_results/hilma/sim_out_hilma_",setting,"_d",d,
                      "_s",seed2,".rda"))
+  
+  #PMED
+  #Note that PMED fails with error if no mediators are selected, which we handle
+  #using the "try" function
+  set.seed(123)
+  out_pmed <- NULL
+  C <- matrix(1, nrow(M), 1)
+  coef <- glmnet::coef.glmnet
+  try({out_pmed <- pmed_wrapper(A = A, M = M, Y = Y, C = C, nlambda = 50)})
+  
+  if(is.null(out_pmed)){
+    pmed_tie <- 0
+  }else{
+    pmed_tie <- out_pmed$summary_result[2,2]
+  }
+  
+  
+  save(pmed_tie,
+       file = paste0("simulation_results/pmed/sim_out_pmed_",setting,"_d",d,
+                     "_s",seed2,".rda"))
+  
   
   #Remove unneeded things
   rm(list = setdiff(ls(),l1))

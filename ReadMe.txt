@@ -7,6 +7,9 @@ in the relevant scripts. When running R code, make sure that your working
 directory is the directory where this ReadMe is stored. In RStudio, you can
 do this by loading the "mediation_DNAm.Rproj" R project.
 
+If you have questions about the code in this repository or issues implementing the
+analysis, contact me at dclarkboucher@fas.harvard.edu. 
+
 SIMULATION STUDY:
 The first step in the simulation study is to generate the necessary data, which 
 can be done with the R script "simulation_scrip/generate_data.R". When using 

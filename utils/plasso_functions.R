@@ -1,3 +1,124 @@
+# This script contains a wrapper function for pathway LASSO as well as various 
+# utility functions. The wrapper function is used by the supplementary analysis.
+# The main analysis uses the same code without the wrapper.
+
+plasso_wrapper <- function(A, M, Y){
+  
+  #Screening based on Y~M model
+  pvals <- 
+    apply(M,2,
+          function(x){
+            summary(lm(y ~ x1 + a, data.frame(y = Y, x1 = x, a = A))
+            )$coefficients[2,4]}
+    )
+  p <- ceiling((nrow(M))/log((nrow(M)))) 
+  colnames(M) <- paste0("M",1:ncol(M))
+  want_cols <- sort(order(pvals)[1:p])
+  
+  M_s <- M[,want_cols]
+  
+  
+  #Input things to pathway LASSO
+  Z <- as.vector(A)
+  M <- M_s
+  R <- Y
+  
+  #Initial things
+  phi<-2
+  rho<-1
+  max.itr<-5000
+  tol<-1e-6
+  thred<-1e-6
+  thred2<-1e-3
+  
+  k <- ncol(M)
+  colnames(M) <- paste0("M",1:k)
+  dd0 <- data.frame(Z=Z, M, R=R)
+  Sigma10<-diag(rep(1,k))
+  Sigma20<-matrix(1,1,1)
+  
+  
+  # standardize data
+  m.Z <- mean(Z)
+  m.M <- apply(M,2,mean)
+  m.R <- mean(R)
+  sd.Z <- sd(Z)
+  sd.M <- apply(M,2,sd)
+  sd.R <- sd(R)
+  
+  Z <- scale(Z)
+  M <- scale(M)
+  R <- scale(R)
+  dd <- data.frame(Z=Z, M, R=R)
+  
+  lambda<-c(10^c(#seq(-5,-3,length.out=5),
+    seq(-3,0,length.out=41)[-1],
+    seq(0,1,length.out=6)[-1])) # lambda values
+  
+  
+  A.pf<-sd.Z/sd.M
+  B.pf<-sd.M/sd.R
+  C.pf<-sd.Z/sd.R
+  AB.pf<-A.pf*B.pf
+  
+  re <- vector("list",length=length(lambda))
+  AB.est = A.est = B.est<-matrix(NA,k,length(lambda))
+  C.est<-rep(NA,length(lambda))
+  
+  #rate parameter for omega vs lambda (using 1-1, best in paper)
+  omega.p <- c(0,0.1,1)
+  omega.p.idx <- 3
+  
+  #fit model for each lambda
+  for(i in length(lambda):1)
+  {
+    out<-NULL
+    if(i==length(lambda))
+    {
+      # starting from the largest lambda value
+      try(out<-mediation_net_ADMM_NC(Z,M,R,lambda=lambda[i],
+                                     omega=omega.p[omega.p.idx]*lambda[i],
+                                     phi=phi,Phi1=NULL,Phi2=NULL,
+                                     rho=rho,rho.increase=FALSE,
+                                     tol=tol,max.itr=max.itr,thred=thred,
+                                     Sigma1=Sigma10,Sigma2=Sigma20,
+                                     trace=FALSE))
+    }else
+    {
+      # for smaller lambda (ith lambda), use the (i+1)th lambda results as burn-in 
+      try(out<-mediation_net_ADMM_NC(Z,M,R,lambda=lambda[i],
+                                     omega=omega.p[omega.p.idx]*lambda[i],
+                                     phi=phi,Phi1=NULL,Phi2=NULL,
+                                     rho=rho,rho.increase=FALSE,
+                                     tol=tol,max.itr=max.itr,
+                                     thred=thred,Sigma1=Sigma10,
+                                     Sigma2=Sigma20,trace=FALSE,
+                                     Theta0=matrix(c(1,A.est[,i+1]*(sd.Z/sd.M)),nrow=1),
+                                     D0=matrix(c(C.est[i+1]*(sd.Z/sd.R),B.est[,i+1]*(sd.M/sd.R)),ncol=1),
+                                     alpha0=matrix(c(1,A.est[,i+1]*(sd.Z/sd.M)),nrow=1),
+                                     beta0=matrix(c(C.est[i+1]*(sd.Z/sd.R),B.est[,i+1]*(sd.M/sd.R)),ncol=1)))
+    }
+    
+    if(is.null(out)==FALSE)
+    {
+      re[[i]]<-out
+      
+      # scale the estimate back to the original scale
+      B.est[,i]<-out$B*(sd.R/sd.M)
+      C.est[i]<-out$C*(sd.R/sd.Z)
+      A.est[,i]<-out$A*(sd.M/sd.Z)
+      AB.est[,i]<-A.est[,i]*B.est[,i]
+    }
+    
+    # print(paste0("lambda index ",i))
+  }
+  
+  list(AB.est = AB.est, want_cols = want_cols)
+}
+
+
+
+
 #################################################################
 # Adaptive pathway lasso functions
 #################################################################
