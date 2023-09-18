@@ -51,6 +51,8 @@ get_data_umc <- function(seed = 5, seed2, vu = 1){
   set.seed(seed2)
   which_mediators <- (sample(2000,p))
   vcv1 <- as.matrix(vcv[which_mediators,which_mediators]) |> cov2cor()
+  diag(vcv1) <- 2
+  vcv1 <- cov2cor(vcv1)
   vcv2 <- t(vcv1 * tau_root) * tau_root
   
   # Determine Y variance, effects
