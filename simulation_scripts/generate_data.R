@@ -157,7 +157,7 @@ get_data <- function(seed = 5, seed1 = 35, seed2,
     
     
     save(Y, M, A, alpha_a, beta_m, beta_a, pve_a, pve_de, pve_ie,
-         file = paste0("datasets/sim_data_",
+         file = paste0("simulation_datasets/sim_data_",
                        setting,"_d",d,"_s",seed2,".rda"))
     
   }
@@ -279,7 +279,7 @@ get_data <- function(seed = 5, seed1 = 35, seed2,
     
     save(Y, M, A, alpha_a, beta_m, beta_a, pve_a, pve_de, pve_ie,
          which_a, which_ab,which_b,
-         file = paste0("datasets/sim_data_",
+         file = paste0("simulation_datasets/sim_data_",
                        setting,"_d",d,"_s",seed2,".rda"))
     
     
@@ -404,7 +404,7 @@ get_data_flex <- function(seed = 5, seed1 = 35, seed2,
     var_y
     
     save(Y, M, A, alpha_a, beta_m, beta_a, pve_a, pve_de, pve_ie,
-         file = paste0("datasets/sim_data_",
+         file = paste0("simulation_datasets/sim_data_",
                        setting,"_d",d,"_s",seed2,".rda"))
     
   }
@@ -526,7 +526,7 @@ get_data_flex <- function(seed = 5, seed1 = 35, seed2,
     
     save(Y, M, A, alpha_a, beta_m, beta_a, pve_a, pve_de, pve_ie,
          which_a, which_ab,which_b,
-         file = paste0("datasets/sim_data_",
+         file = paste0("simulation_datasets/sim_data_",
                        setting,"_d",d,"_s",seed2,".rda"))
     
     
